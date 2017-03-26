@@ -1,0 +1,101 @@
+DOMAINS
+ nama,jender,pekerjaan,benda,alasan,zat = symbol %ini adalah dengan bertipe symbol untuk nama,jender,pekerjaan,benda,alasan,zat
+ umur=integer %ini adalah dengan bertipe integer untuk umur
+
+PREDICATES
+ nondeterm orang(nama, umur, jender, pekerjaan)
+ nondeterm selingkuh(nama, nama)
+ terbunuh_dengan(nama, benda)
+ terbunuh(nama)
+ nondeterm pembunuh(nama)
+ motif(alasan)
+ ternodai(nama, zat)
+ milik(nama, benda)
+ nondeterm cara_kerja_mirip(benda, benda)
+ nondeterm kemungkinan_milik(nama, benda)
+ nondeterm dicurigai(nama)
+
+/* * * Fakta-fakta tentang pembunuhan * * */
+CLAUSES
+ orang(budi,55,m,tukang_kayu). %budi adalah orang dan dia bekerja sebagai tukang kayu
+ orang(aldi,25,m,pemain_sepak_bola). %aldi adalah orang dan dia bekerja sebagai pemain bola
+ orang(aldi,25,m,tukang_jagal). %aldi adalah orang dan dia bekerja sebagai tukang jagal
+ orang(joni,25,m,pencopet). %joni adalah orang dan dia bekerja sebagai pencopet
+ selingkuh(ina,joni). %ina selingkuhan joni
+ selingkuh(ina,budi). %ina juga selingkuhan budi
+ selingkuh(siti,joni). %siti selingkuhan joni
+ terbunuh_dengan(siti,pentungan). %siti terbunuh dengan pentungan
+ terbunuh(siti).
+ motif(uang).
+ motif(cemburu).
+ motif(dendam).
+ ternodai(budi, darah). %budi ternodai darah
+ ternodai(siti, darah). %siti ternodai darah
+ ternodai(aldi, lumpur). %aldi ternodai lumpur
+ ternodai(joni, coklat). %joni ternodai coklat
+ ternodai(ina, coklat). %ina ternodai coklat
+ milik(budi,kaki_palsu). %budi memiliki kaki palsu
+ milik(joni,pistol). %joni memiliki pistol
+
+/* * * Basis Pengetahuan * * */
+
+ cara_kerja_mirip(kaki_palsu, pentungan). %kaki palsu cara kerja mirip dengan pentungan
+ cara_kerja_mirip(balok, pentungan). %balok cara kerja mirip dengan pentungan
+ cara_kerja_mirip(gunting, pisau). %gunting cara kerja mirip dengan pisau
+ cara_kerja_mirip(sepatu_bola, pentungan). %sepatu bola cara kerjaa mirip dengan pentungan
+
+ kemungkinan_milik(X,sepatu_bola):- %X kemungkinan_memiliki sepatu bola, jika
+	orang(X,_,_,pemain_sepak_bola). %X adalah pemain sepak bola. Coba lihat pada predikat orang. Dan hasilnya X adalah ALDI
+ kemungkinan_milik(X,gunting):- %X kemungkinan_memiliki gunting, jika
+	orang(X,_,_,pekerja_salon). %X adalah orang yang bekerja disalon sbg pekerja salon. Tapi pada klausa tidak ada yg pekerjaan salon
+ kemungkinan_milik(X,Benda):- %X kemungkinan_memiliki benda(kaki palsu, balok dan sepatu bola), jika
+	milik(X,Benda). %X memiliki benda(kaki palsu, balok dan sepatu bola). Lihat pada predikat milik. Ternyata yang memiliki benda(kaki palsu, balok dan sepatu bola) adalah BUDI karna dia punya kaki palsu
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* dicurigai semua orang yang memiliki senjata yang       *
+* kerjanya mirip dengan senjata penyebab siti terbunuh.  *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * *  */
+ dicurigai(X):- %X dicurigai, jika
+	terbunuh_dengan(siti,Senjata) , %Siti terbunuh dengan senjata. Coba lihat pada predikat terbunuh_dengan, supaya bisa mengetahui senjata apa yang digunakan oleh pembunuh
+	cara_kerja_mirip(Benda,Senjata) ,%Benda yang cara kerjanya mirip senjata, dimana senjata adalah pentungan. Lihat predicate cara_kerja_mirip, supaya mengetahui benda apa yang cara kerjanya mirip dengan pentungan.
+	 				 %Ternyata benda yang cara kerjanya mirip pentungan adalah kaki palsu, balok dan sepatu_bola.
+	kemungkinan_milik(X,Benda). %X kemungkinan miliki benda(kaki palsu, balok dan sepatu bola). Lihat predikat kemungkinan_milik. X adalah BUDI dan ALDI kemungkinan_milik benda(pistol dan sepatu bola).
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+* dicurigai laki-laki yang selingkuh dengan siti.  *
+* * * * * * * * * * * * * * * * * * * * * * * * * */
+ dicurigai(X):- %X dicurigai, jika
+	motif(cemburu), %cemburu merupakan motif dibalik pembunuhan.
+ 	orang(X,_,m,_), %X adalah orang dan bergender m(male).
+	selingkuh(siti,X). %Siti selingkuh S. Coba lihat pada predicate selingkuh. Ternyata X adalah JONI
+
+/* * * * * * * * * * * * * * * * * * * * * * *
+* dicurigai perempuan yang selingkuh dengan *
+* laki-laki yang juga selingkuh dengan siti *
+* * * * * * * * * * * * * * * * * * * * * * */
+ dicurigai(X):- %X dicurigai, jika
+	motif(cemburu), %cemburu merupakan motif dibalik pembunuhan.
+	orang(X,_,f,_), %X adalah orang dan bergender f(female). DI predicate orang, tidak ditemukan orang dengan gender female.
+	selingkuh(X,Lakilaki),
+	selingkuh(siti,Lakilaki). %Siti selingkuh dengan lakilaki
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+* dicurigai pencopet yang mempunyai motif uang. *
+* * * * * * * * * * * * * * * * * * * * * * * * * * */
+ dicurigai(X):- %X dicurigai, jika
+	motif(uang), %uang merupakan motif dibalik pembunuhan.
+ 	orang(X,_,_,pencopet). %X adalah orang dengan pekerjaan pencopet. Coba lihat pada predicate orang. X adalah JONI
+
+ %Mencari siapa pembunuhnya.Dimana predicate tersebut harus dibuktikan kebenarannya. Dsini sbg tmpat predicat pembunuh
+ pembunuh(Pembunuh):- %pembunuh adalah pembunuh, jika
+ 	orang(Pembunuh,_,_,_), %pembunuh merupaka orang, maka visual prolog akan mencari predicate orang dan mengecek, siapa saja yang menjadi calon tersangka. Calon tersangkanya itu BUDI,ALDI,JONI
+	terbunuh(Terbunuh), %terbunuh adalah terbunuh, maka visual prolog akan mencari predicate terbunuh dan mengecek, ternyata yang terbunuh adalah siti.
+Terbunuh <> Pembunuh, /* Bukan bunuh diri */
+dicurigai(Pembunuh), %dan pembunuh adalah orang yang dicurigai, maka visual prolog akan mencari predicate dicurigai. Lihat pada bagian predicate di curigai. Yang dicurigai adalah BUDI,JONI dan ALDI
+ternodai(Pembunuh,Zat), %pembunuh(budi, aldi, joni) ternodai zat(darah,lumpur,coklat). Lihat pada predikat ternodai
+ternodai(Terbunuh,Zat). %terbunuh(siti) ternodai zat(darah). Pada predicate ternodai. Ternyata siti dan budi ternodai darah. Sehingga dipastikan kalo BUDI adalah pembunuh SITI
+
+GOAL
+ pembunuh(Pembunuh).
+ %karna pada goal yang dicari pembunuh, maka visual prolog akan mencari predicate pembunuh
+ %setelah dilakukan pengecekan dan pengujian, ternyata BUDI adalah pembunuh SITI
