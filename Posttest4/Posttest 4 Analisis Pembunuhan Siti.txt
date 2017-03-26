@@ -1,3 +1,5 @@
+/* Nama : FERRY MIECHEL LUBIS  Nim : 1515015111 */
+
 DOMAINS
  nama,jender,pekerjaan,benda,alasan,zat = symbol %ini adalah dengan bertipe symbol untuk nama,jender,pekerjaan,benda,alasan,zat
  umur=integer %ini adalah dengan bertipe integer untuk umur
@@ -99,3 +101,92 @@ GOAL
  pembunuh(Pembunuh).
  %karna pada goal yang dicari pembunuh, maka visual prolog akan mencari predicate pembunuh
  %setelah dilakukan pengecekan dan pengujian, ternyata BUDI adalah pembunuh SITI
+
+Analisis unifikasi dan lacak balik :
+
+ Pada Goal pembunuh(X), akan dicari pembunuh dengan variabel X. Visual prolog akan mencari dengan CLAUSA pembunuh(Pembunuh). 
+ Variabel X pada Goal akan di unifikasi ke dalam variabel Pembunuh. 
+ Kemudian, akan mencari pembunuh dengan mengecek setiap aturan dan fakta.
+ 
+ 1. Aturan pertama. 
+    Disebut Pembunuh jika Pembunuh adalah orang. Visual prolog akan mengecek siapa saja orang yang terdapat dalam fakta, 
+    kemudian ditemukan yang termasuk dalam orang adalah budi 55 tahun laki-laki tukang kayu, aldi 25 tahun laki-laki pemain bola, 
+    aldi 25 tahun laki-laki tukang jagal dan joni 25 tahun laki-laki pencopet. Karena budi adalah fakta pertama, 
+    jadi budi diunifikasi kedalam Pembunuh. Aturan ini telah terpenuhi. Kemudian visual prolog akan mengecek aturan kedua.
+ 
+ 2. Aturan kedua. 
+    Disebut Pembunuh jika Pembunuh adalah orang dan yang Terbunuh bukan Pembunuh (bunuh diri). 
+    Kemudian ditemukan fakta bahwa yang terbunuh adalah siti. Aturan ini telah terpenuhi. 
+    Kemudian visual prolog akan mengecek aturan ketiga.
+
+ 3. Aturan ketiga. 
+    Disebut Pembunuh jika Pembunuh adalah orang yang berbeda dengan Terbunuh. Pada fakta sebelumnya, orang yang 
+    memungkinkan untuk menjadi Pembunuh adalah budi, aldi dan Joni sedangkan Terbunuh adalah siti dimana siti adalah 
+    selingkuhan joni sedangkan joni adalah selingkuhan ina dan ina selingkuhan budi. Aturan ini telah terpenuhi. 
+    Kemudian visual prolog akan mengecek aturan keempat.
+
+ 4. Aturan keempat. 
+    Dikatakan Pembunuh jika Pembunuh dicurigai. Kemudian visual prolog akan menjalankan aturan dicurigai(X). 
+
+ 5. Dicurigai(X) pertama. 
+    a. Aturan pertama. X dicurigai jika siti terbunuh dengan Senjata. Dengan aturan ini, X diunifikasi kedalam variabel siti. 
+       Dimana dalam fakta siti terbunuh dengan pentungan. Senjata telah ditemukan. Aturan telah terpenuhi. 
+       Visual prolog akan melanjutkan ke aturan selanjutnya.
+    b. Aturan kedua. X dicurigai jika cara kerja benda mirip dengan Senjata. Pada fakta dan aturan sebelumnya ditemukan Senjata adalah pentungan. 
+       Visual prolog akan mengecek Benda yang cara kerjanya mirip dengan pentungan. Dalam fakta Benda yang cara kerjanya mirip dengan 
+       pentungan adalah kaki palsu, karena kaki palsu adalah fakta pertama maka kaki palsu diunifikasi ke dalam variabel Benda. 
+       Aturan telah terpenuhi. Visual prolog akan melanjutkan ke aturan selanjutnya.
+    c. Aturan ketiga. X dicurigai jika X kemungkinan memiliki Benda. Dalam fakta dan aturan sebelumnya Benda adalah kaki palsu. 
+       Visual prolog akan mengecek dalam fakta orang yang kemungkinan memiliki kaki palsu. Dimana dalam fakta, X kemungkinan 
+       memiliki Benda jika X memiliki Benda tersebut. Dalam fakta sebelumnya Benda adalah kaki palsu kemudian dalam 
+       fakta budi memiliki kaki palsu. Maka dapat disimpulkan bahwa budi kemungkinan memiliki kaki palsu. 
+       Kemudian budi diunifikasi kedalam variabel X dan kaki palsu diunifikasi kedalam variabel Benda. 
+       Aturan telah terpenuhi. Visual prolog akan melanjutkan ke aturan selanjutnya.
+    d. Karena dalam predicates dicurigai lebih dari satu maka visual prolog melanjutkan pembuktian bahwa budi adalah X atau menemukan X dicurigai lainnya.
+    e. Dicurigai(X) kedua. 
+       Aturan pertama. Membuktikan budi adalah X serta mencari yang dicurigai lainnya dengan aturan X dicurigai jika motif adalah cemburu. 
+       Visual prolog akan mengecek fakta, dan motif cemburu ada dalam fakta. Aturan terpenuhi. Visual Prolog akan melanjutkan ke aturan selanjutnya. 
+    f. Aturan kedua. Dalam aturan ini budi dicurigai jika budi adalah orang yang berjenis kelamin laki-laki. 
+       Dalam fakta dan aturan sebelumya, budi berjenis kelamin laki-laki. Aturan terpenuhi. 
+       Visual Prolog akan melanjutkan ke aturan selanjutnya.
+    g. Aturan ketiga. Dalam aturan ini budi dicurigai jika siti selingkuh dengan budi. Dalam fakta, budi tidak berselingkuh dengan siti. 
+       Aturan ini tidak terpenuhi, maka dilakukan lacakbalik. Visual prolog akan kembali ke aturan sebelumnya dimana mencari orang 
+       yang berjenis kelamin laki-laki selain budi. Dalam fakta orang yang berjenis kelamin laki-laki setelah budi adalah aldi. 
+       Visual prolog akan mengecek kembali apakah siti selingkuh dengan aldi. Ternyata tidak, dilakukan kembali lacakbalik 
+       mencari orang yang berjenis kelamin laki-laki selain budi dan aldi. Dalam fakta orang yang berjenis 
+       kelamin laki-laki selain budi dan aldi adalah joni. Kemudian joni diunifikasi kedalam variabel X lalu visual prolog 
+       akan menjalankan aturan selanjutnya, mengecek apakah siti selingkuh dengan joni. Dalam aturan benar bahwa siti selingkuh dengan joni. 
+       Dengan ini maka joni diunifikasi kedalam variabel X dicurigai. Maka orang yang dicurigai adalah budi(aturan dicurigai sebelumya) dan joni. 
+       Aturan telah terpenuhi. Visual Prolog akan melanjutkan ke aturan selanjutnya.
+    h. Setelah mendapatkan orang yang dicurigai adalah Budi dan Joni melalui aturan yang berbeda.Visual prolog mencari orang yang dicurigai lainnya. 
+    i. Dicurigai(X) ketiga. Aturan ketujuh. Dalam aturan ini X dicurigai jika motif adalah cemburu. 
+       Visual prolog akan mengecek apakah terdapat fakta. Dalam fakta benar adanya motif karena cemburu. Aturan terpenuhi. 
+       Visual prolog akan melanjutkan ke aturan selanjutnya.
+    j. Aturan pertama. Dalam aturan ini, X dicurigai jika X adalah orang yang berjenis kelamin perempuan. 
+       Visual prolog akan mencari orang yang berjenis kelamin perempuan. Karena dalam fakta tidak terdapat orang yang 
+       berjenis kelamin perempuan, maka aturan ini tidak terpenuhi. Dan karena dalam aturan ini menggunakan "DAN" maka aturan selanjutnya 
+       tidak bisa dijalankan. Visual prolog melanjutkan ke pencarian orang yang dicurigai selanjutnya.
+    k. Dicurigai(X) keempat. 
+       Aturan pertama. Dalam aturan ini X dicurigai jika motif adalah uang. 
+       Visual prolog akan mengecek apakah terdapat motif karena uang. Dalam fakta terdapat motif karena uang. Aturan telah terpenuhi. 
+       Visual prolog akan melanjutkan ke aturan selanjutnya.
+    l. Aturan kedua. X dicurigai jika X adalah seorang pencopet. Visual prolog akan mengecek terdapat orang yang bekereja sbg pencopet. 
+       Dalam fakta orang yang berprofesi sebagai pencopet adalah joni. Maka Joni diunifikasi kedalam variabel X. Aturan terpenuhi.  
+    m. Sampai saat ini orang yang dicurigai adalah budi dan joni. Visual Prolog akan melanjutkan ke pencarian pembunuh dengan dicurigai.
+
+ 6. Aturan kelima. 
+    Dikatakan Pembunuh jika Pembunuh ternodai zat. Karena Pembunuh adalah budi dan joni, 
+    maka visual prolog akan mencari zat yang menodai budi dan joni. Dalam fakta budi ternodai oleh darah, 
+    dan joni ternodai coklat maka darah dan coklat di unifikasi ke dalam variabel zat. Aturan terpenuhi. 
+    Visual prolog akan melanjutkan ke aturan selanjutnya.
+ 7. Aturan keenam. 
+    Dalam aturan ini Pembunuh dikatakan pembunuh jika Terbunuh ternodai Zat. Dalam aturan dan fakta sebelumnya ditemukan 
+    bahwa Terbunuh adalah siti dan Zat adalah darah dan coklat. Maka visual prolog akan mengecek apakah benar siti ternodai darah atau coklat.
+    Dari fakta adalah benar siti ternodai darah bukan coklat. Aturan terpenuhi.
+ 8. Maka dapat disimpulkan bahwa Pembunuh adalah BUDI. 
+
+
+
+
+
+
